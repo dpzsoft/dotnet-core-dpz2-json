@@ -684,5 +684,157 @@ namespace dpz2.Json {
 
         }
 
+        /// <summary>
+        /// 将Json对象覆盖到标准对象
+        /// </summary>
+        /// <param name="unit"></param>
+        /// <param name="tp"></param>
+        /// <returns></returns>
+        public static object GetObject(JsonUnit unit, Type tp) {
+
+            object obj;
+            if (unit == null) return null;
+            //var tp = obj.GetType();
+
+            switch (tp.FullName) {
+                case "System.String":
+                    // 覆盖字符串
+                    obj = unit.GetString();
+                    break;
+                case "System.Int32":
+                    // 覆盖整型
+                    obj = (int)unit.GetNumber();
+                    break;
+                case "System.Int64":
+                    // 覆盖长整型
+                    obj = (long)unit.GetNumber();
+                    break;
+                case "System.Single":
+                    // 覆盖单精度浮点类型
+                    obj = (float)unit.GetNumber();
+                    break;
+                case "System.Double":
+                    // 覆盖双精度浮点类型
+                    obj = unit.GetNumber();
+                    break;
+                case "System.Boolean":
+                    // 覆盖布尔类型
+                    obj = unit.GetBoolean();
+                    break;
+                default:
+                    if (tp.Name == "List`1") {
+                        // 覆盖列表
+                        var ptct = tp.GetConstructor(System.Type.EmptyTypes);
+                        obj = ptct.Invoke(null);
+                        var objAdd = tp.GetMethod("Add");
+                        //List<object> list = (List<object>)obj;
+
+                        // 获取列表关联类型
+                        var gas = tp.GetGenericArguments();
+                        Type ga = null;
+                        if (gas.Length > 0) ga = gas[0];
+
+                        // 添加列表单元
+                        for (int i = 0; i < unit.Count; i++) {
+                            objAdd.Invoke(obj, new object[] { GetObject(unit[i], ga) });
+                        }
+                    } else {
+                        // 覆盖对象
+                        var ptct = tp.GetConstructor(System.Type.EmptyTypes);
+                        obj = ptct.Invoke(null);
+                        var pros = tp.GetProperties();
+
+                        // 遍历属性
+                        foreach (var pro in pros) {
+                            var pto = GetObject(unit[pro.Name], pro.PropertyType);
+                            pro.SetValue(obj, pto, null);
+                        }
+
+                    }
+                    break;
+            }
+
+            return obj;
+
+        }
+
+        /// <summary>
+        /// 将对象进行Json序列化
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
+        public static string SerializeObject(object obj) {
+
+            StringBuilder sb = new StringBuilder();
+            var tp = obj.GetType();
+
+            switch (tp.FullName) {
+                case "System.String":
+                    // 序列化字符串
+                    sb.Append(JsonString.GetJsonString(obj.ToString()));
+                    break;
+                case "System.Int32":
+                case "System.Int64":
+                case "System.Single":
+                case "System.Double":
+                    // 序列化数值
+                    sb.Append(obj.ToString());
+                    break;
+                case "System.Boolean":
+                    // 序列化布尔类型
+                    sb.Append((bool)obj ? "true" : "false");
+                    break;
+                default:
+                    if (tp.Name == "List`1") {
+                        // 序列化列表
+                        // 获取相关函数接口
+                        var objGetItem = tp.GetMethod("get_Item");
+                        var objGetCount = tp.GetMethod("get_Count");
+
+                        // 获取Count属性
+                        int count = (int)objGetCount.Invoke(obj, null);
+
+                        // 添加列表单元
+                        sb.Append("[");
+                        for (int i = 0; i < count; i++) {
+                            if (i > 0) sb.Append(",");
+                            sb.Append(SerializeObject(objGetItem.Invoke(obj, new object[] { i })));
+                        }
+                        sb.Append("]");
+                    } else {
+                        // 序列化对象
+                        bool isFirst = true;
+                        sb.Append("{");
+
+                        // 遍历属性
+                        var pros = tp.GetProperties();
+                        foreach (var pro in pros) {
+                            if (isFirst) { isFirst = false; } else { sb.Append(","); }
+                            sb.AppendFormat("\"{0}\":{1}", pro.Name, SerializeObject(pro.GetValue(obj)));
+                        }
+                        sb.Append("}");
+
+                    }
+                    break;
+            }
+
+            return sb.ToString();
+
+        }
+
+        /// <summary>
+        /// 将Json字符串反序列化并按类型返回对象
+        /// </summary>
+        /// <param name="json"></param>
+        /// <param name="tp"></param>
+        /// <returns></returns>
+        public static object DeserializeObject(string json, Type tp) {
+            object obj;
+            using (var js = ParseJson(json)) {
+                obj = GetObject(js, tp);
+            }
+            return obj;
+        }
+
     }
 }

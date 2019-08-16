@@ -14,7 +14,7 @@
 
 ```
 {
-  aaa:{
+	aaa:{
 		bbb:[111,222],
 		cc:"abc"
 	},
@@ -41,13 +41,13 @@ Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(obj));
 
 ```
 using (var json = new dpz2.Json.JsonObject()) {
-		var aaa = json.Object("aaa");
-		var bbb = aaa.Array("bbb");
-		bbb.Number(0).Value = 111;
-		bbb.Number(1).Value = 222;
-		aaa.String("cc").Value = "abc";
-		json.String("ddd").Value = "qaz";
-		Console.WriteLine(json.ToJsonString());
+	var aaa = json.Object("aaa");
+	var bbb = aaa.Array("bbb");
+	bbb.Number(0).Value = 111;
+	bbb.Number(1).Value = 222;
+	aaa.String("cc").Value = "abc";
+	json.String("ddd").Value = "qaz";
+	Console.WriteLine(json.ToJsonString());
 }
 ```
 
@@ -55,11 +55,11 @@ using (var json = new dpz2.Json.JsonObject()) {
 
 ```
 using (var json = new dpz2.Json.JsonObject()) {
-		json.Object("aaa").Array("bbb").Number(0).Value = 111;
-		json.Object("aaa").Array("bbb").Number(1).Value = 222;
-		json.Object("aaa").String("cc").Value = "abc";
-		json.String("ddd").Value = "qaz";
-		Console.WriteLine(json.ToJsonString());
+	json.Object("aaa").Array("bbb").Number(0).Value = 111;
+	json.Object("aaa").Array("bbb").Number(1).Value = 222;
+	json.Object("aaa").String("cc").Value = "abc";
+	json.String("ddd").Value = "qaz";
+	Console.WriteLine(json.ToJsonString());
 }
 ```
 
@@ -68,11 +68,11 @@ using (var json = new dpz2.Json.JsonObject()) {
 
 ```
 using (var json = new dpz2.Json.JsonObject()) {
-		json.Object("aaa").Array("bbb").Number(0).Value = 111;
-		json["aaa"]["bbb"].Number(1).Value = 222;
-		json["aaa"].String("cc").Value = "abc";
-		json.String("ddd").Value = "qaz";
-		Console.WriteLine(json.ToJsonString());
+	json.Object("aaa").Array("bbb").Number(0).Value = 111;
+	json["aaa"]["bbb"].Number(1).Value = 222;
+	json["aaa"].String("cc").Value = "abc";
+	json.String("ddd").Value = "qaz";
+	Console.WriteLine(json.ToJsonString());
 }
 ```
 
@@ -81,4 +81,15 @@ using (var json = new dpz2.Json.JsonObject()) {
 ```
 double b1 = json.Object("aaa").Array("bbb").Number(0).Value;
 double b1 = json["aaa"]["bbb"][0].GetNumber();
+```
+
+### 支持对象的序列化和反序列化
+
+为了增加本类库的适用场景，自1.0.1908.2版本开始，类库将支持标准.Net对象的序列化和反序列化，代码如下（反序列化时，以TestObject类型为例）：
+
+```
+// 反序列化
+TestObject obj = (TestObject)dpz2.Json.Parser.DeserializeObject(str, typeof(TestObject));
+// 序列化
+string str = dpz2.Json.Parser.SerializeObject(obj);
 ```

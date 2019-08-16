@@ -81,6 +81,15 @@ namespace dpz2.Json {
         }
 
         /// <summary>
+        /// 获取数值
+        /// </summary>
+        /// <returns></returns>
+        protected override double OnGetNumber() {
+            if (!this.Value.IsDouble()) throw new Exception($"字符串\"{this.Value}\"无法有效的转化为数值内容");
+            return this.Value.ToDouble();
+        }
+
+        /// <summary>
         /// 设置数值
         /// </summary>
         /// <param name="value"></param>
@@ -97,17 +106,18 @@ namespace dpz2.Json {
         }
 
         /// <summary>
-        /// 获取Json字符串
+        /// 获取标准化的Json字符串
         /// </summary>
+        /// <param name="value"></param>
         /// <returns></returns>
-        protected override string OnGetJsonString() {
-            if (this.Value == null) {
+        public static string GetJsonString(string value) {
+            if (value == null) {
                 return "null";
             } else {
                 StringBuilder sb = new StringBuilder();
                 sb.Append("\"");
-                for (int i = 0; i < this.Value.Length; i++) {
-                    char c = this.Value[i];
+                for (int i = 0; i < value.Length; i++) {
+                    char c = value[i];
                     int code = (int)c;
                     if (code < 128) {
                         switch (c) {
@@ -146,6 +156,14 @@ namespace dpz2.Json {
                 sb.Append("\"");
                 return sb.ToString();
             }
+        }
+
+        /// <summary>
+        /// 获取Json字符串
+        /// </summary>
+        /// <returns></returns>
+        protected override string OnGetJsonString() {
+            return GetJsonString(this.Value);
         }
 
         /// <summary>

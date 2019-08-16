@@ -206,6 +206,12 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:dpz2.Json.JsonString.OnGetNumber">
+            <summary>
+            获取数值
+            </summary>
+            <returns></returns>
+        </member>
         <member name="M:dpz2.Json.JsonString.OnSetNumber(System.Double)">
             <summary>
             设置数值
@@ -217,6 +223,13 @@
             设置字符串
             </summary>
             <param name="value"></param>
+        </member>
+        <member name="M:dpz2.Json.JsonString.GetJsonString(System.String)">
+            <summary>
+            获取标准化的Json字符串
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
         </member>
         <member name="M:dpz2.Json.JsonString.OnGetJsonString">
             <summary>
@@ -502,6 +515,51 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:dpz2.Json.Jttp">
+            <summary>
+            一种基于Json进行的通讯协议
+            </summary>
+        </member>
+        <member name="P:dpz2.Json.Jttp.Header">
+            <summary>
+            头部信息
+            </summary>
+        </member>
+        <member name="T:dpz2.Json.JttpHeader">
+            <summary>
+            Jttp协议专用头部
+            </summary>
+        </member>
+        <member name="P:dpz2.Json.JttpHeader.Ver">
+            <summary>
+            获取或设置协议版本
+            </summary>
+        </member>
+        <member name="P:dpz2.Json.JttpHeader.Type">
+            <summary>
+            获取或设置协议类型
+            </summary>
+        </member>
+        <member name="P:dpz2.Json.JttpHeader.SessionID">
+            <summary>
+            获取或设置交互识标
+            </summary>
+        </member>
+        <member name="P:dpz2.Json.JttpHeader.Time">
+            <summary>
+            获取或设置时间戳
+            </summary>
+        </member>
+        <member name="P:dpz2.Json.JttpHeader.Status">
+            <summary>
+            获取或设置通讯状态
+            </summary>
+        </member>
+        <member name="P:dpz2.Json.JttpHeader.Error">
+            <summary>
+            获取或设置错误代码
+            </summary>
+        </member>
         <member name="T:dpz2.Json.Parser">
             <summary>
             Json解析器
@@ -517,6 +575,29 @@
             获取对象
             </summary>
             <param name="json"></param>
+            <returns></returns>
+        </member>
+        <member name="M:dpz2.Json.Parser.GetObject(dpz2.Json.JsonUnit,System.Type)">
+            <summary>
+            将Json对象覆盖到标准对象
+            </summary>
+            <param name="unit"></param>
+            <param name="tp"></param>
+            <returns></returns>
+        </member>
+        <member name="M:dpz2.Json.Parser.SerializeObject(System.Object)">
+            <summary>
+            将对象进行Json序列化
+            </summary>
+            <param name="obj"></param>
+            <returns></returns>
+        </member>
+        <member name="M:dpz2.Json.Parser.DeserializeObject(System.String,System.Type)">
+            <summary>
+            将Json字符串反序列化并按类型返回对象
+            </summary>
+            <param name="json"></param>
+            <param name="tp"></param>
             <returns></returns>
         </member>
     </members>
